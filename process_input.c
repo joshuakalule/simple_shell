@@ -23,13 +23,13 @@ void free_av(char **av)
 char **line_to_av(char *str)
 {
 	char *token, **av;
-	char delim = ' ';
+	char *delims = " \"";
 	size_t len, n;
 
 	av = NULL;
 	n = 0;
 	token = NULL;
-	token = strtok(str, &delim);
+	token = strtok(str, delims);
 	while (token)
 	{
 		len = strlen(token);
@@ -47,7 +47,7 @@ char **line_to_av(char *str)
 		}
 		memcpy((void *)av[n], (void *)token, len);
 		av[n][len] = '\0';
-		token = strtok(NULL, &delim);
+		token = strtok(NULL, delims);
 		n++;
 	}
 	if (!av)

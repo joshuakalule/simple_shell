@@ -41,7 +41,8 @@ int main(int argc, char *argv[])
 			break;
 
 		av = line_to_av(lineptr);
-
+		if (!av)
+			break;
 		/**
 		*if (!av || !*av)
 		*	break;
