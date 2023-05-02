@@ -1,61 +1,64 @@
 #include "main.h"
 
 /**
- * free_a - frees the av array
+ * free_av - frees the av array
  * @av: pointer to array to free
- * @n: number of elements in av array
  */
-void free_a(char **av, size_t *n)
+void free_av(char **av)
 {
 	size_t i;
 
-	if (!av || !*av)
+	if (!av)
 		return;
 	for (i = 0; av[i] != NULL; i++)
 		free(av[i]);
 	free(av);
-	av = NULL;
-	*n = 0;
 }
 
 /**
  * line_to_av - generates *argv[]
  * @str: string input from the terminal
- * @av: array to populate
- * @n: number of elements in av array
  * Return: *argv[]
  */
-char **line_to_av(char *str, char **av, size_t *n)
+char **line_to_av(char *str)
 {
-	char *word;
-	size_t _n, len;
-	char *delim = " ";
+	char *token, **av;
+	char delim = ' ';
+	size_t len, n;
 
-	_n = 0;
-	word = strtok(str, delim);
-	while (word)
+	av = NULL;
+	n = 0;
+	token = NULL;
+	token = strtok(str, &delim);
+	while (token)
 	{
-		len = strlen(word);
-		av = realloc(av, sizeof(av) * (_n + 2));
+		len = strlen(token);
+		if (!av)
+			av = malloc(sizeof(av) * 1);
+		else
+			av = realloc(av, sizeof(av) * (n + 1));
+		if (!av)
+			return (NULL);
+		av[n] = malloc(sizeof(**av) * (len + 1));
 		if (!av)
 		{
-			free_a(av, n);
-			exit(EXIT_FAILURE);
+			free_av(av);
+			return (NULL);
 		}
-
-		av[_n] = malloc(sizeof(**av) * (len + 1));
-		if (!av[_n])
-		{
-			free_a(av, n);
-			exit(EXIT_FAILURE);
-		}
-
-		strncpy(av[_n], word, len);
-		if (av[_n][len - 1] == '\n')
-			av[_n][len - 1] = '\0';
-		word = strtok(NULL, delim);
-		_n++;
+		memcpy((void *)av[n], (void *)token, len);
+		av[n][len] = '\0';
+		token = strtok(NULL, &delim);
+		n++;
 	}
-	av[_n] = NULL;
+	if (!av)
+		av = malloc(sizeof(av) * 1);
+	else
+		av = realloc(av, sizeof(av) * (n + 1));
+	if (!av)
+	{
+		free_av(av);
+		return (NULL);
+	}
+	av[n] = NULL;
 	return (av);
 }

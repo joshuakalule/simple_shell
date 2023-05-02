@@ -1,11 +1,12 @@
 #include "main.h"
 
 #define EXIT_FAIL(a) {\
-	if (lineptr)\
-		free(lineptr);\
+	free(lineptr);\
 	free_a(a, &n);\
 	perror(argv[0]);\
 	exit(EXIT_FAILURE); }
+
+extern char **environ;
 
 /**
  * main - entry point of the program
@@ -15,47 +16,62 @@
  *
  * Return: 0 (Success)
  */
-int main(int argc, char **argv, char **env)
+int main(int argc, char *argv[])
 {
-	char *lineptr, **av;
-	size_t n;
-	ssize_t chars_read;
-	pid_t child;
+	char *lineptr;
+	size_t n, len;
+	char **av;
 	int status;
+	/*int i;*/
+	pid_t child;
 
-	av = NULL;
-	lineptr = NULL;
-	n = 0;
 	if (argc != 1)
-		EXIT_FAIL(av)
+		exit(EXIT_FAILURE);
+	lineptr = NULL;
+	av = NULL;
+	n = 0;
 	while (1)
 	{
-		/*write(STDOUT_FILENO, "($) ", 4);*/
-		fflush(stdout);
-		chars_read = getline(&lineptr, &n, stdin);
-		if (chars_read == -1)
-			EXIT_FAIL(av)
-		av = malloc(sizeof(av));
-		if (!av)
-			EXIT_FAIL(av)
-		av = line_to_av(lineptr, av, &n);
+		if (getline(&lineptr, &n, stdin) == -1)
+			break;
+		len = strlen(lineptr);
+		if (len > 0 && lineptr[len - 1] == '\n')
+			lineptr[len - 1] = '\0';
+		if (strncmp("exit", lineptr, 4) == 0)
+			break;
+
+		av = line_to_av(lineptr);
+
+		/**
+		*if (!av || !*av)
+		*	break;
+		*printf("av: ");
+		*for (i = 0; av[i] != NULL; i++)
+		*	printf("'%s' ", av[i]);
+		*printf("\n-----------------------------------------\n");
+		*/
+
 		child = fork();
 		if (child == 0)
 		{
-			if (av[1])
-				EXIT_FAIL(av)
-			if (execve(av[0], av, env) == -1)
-				EXIT_FAIL(av)
+			/*child*/
+			if (execve(av[0], av, environ) == -1)
+			{
+				perror(argv[0]);
+				break;
+			}
 		}
 		else
 		{
+			/*parent*/
 			wait(&status);
-			free_a(av, &n);
-			free(lineptr);
 		}
-		fflush(stdin);
+		free_av(av);
+		free(lineptr);
+		av = NULL;
+		n = 0;
 	}
-	free_a(av, &n);
+	free_av(av);
 	free(lineptr);
 	return (EXIT_SUCCESS);
 }

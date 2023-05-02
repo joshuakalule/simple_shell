@@ -12,7 +12,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-char **line_to_av(char *, char **, size_t *);
-void free_a(char **, size_t *);
+char **line_to_av(char *);
+void free_av(char **);
 
 #endif /* _MAIN_H_ */
