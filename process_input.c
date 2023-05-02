@@ -1,40 +1,61 @@
 #include "main.h"
 
 /**
+ * free_a - frees the av array
+ * @av: pointer to array to free
+ * @n: number of elements in av array
+ */
+void free_a(char **av, size_t *n)
+{
+	size_t i;
+
+	if (!av || !*av)
+		return;
+	for (i = 0; av[i] != NULL; i++)
+		free(av[i]);
+	free(av);
+	av = NULL;
+	*n = 0;
+}
+
+/**
  * line_to_av - generates *argv[]
  * @str: string input from the terminal
+ * @av: array to populate
+ * @n: number of elements in av array
  * Return: *argv[]
  */
-char **line_to_av(char *str)
+char **line_to_av(char *str, char **av, size_t *n)
 {
-	char **av;
 	char *word;
-	size_t n, len;
+	size_t _n, len;
 	char *delim = " ";
 
-	av = malloc(sizeof(av));
-	if (!av)
-		exit(EXIT_FAILURE);
-
-	n = 0;
+	_n = 0;
 	word = strtok(str, delim);
 	while (word)
 	{
 		len = strlen(word);
-		av = realloc(av, sizeof(av) * (n + 2));
+		av = realloc(av, sizeof(av) * (_n + 2));
 		if (!av)
+		{
+			free_a(av, n);
 			exit(EXIT_FAILURE);
+		}
 
-		av[n] = malloc(sizeof(**av) * (len + 1));
-		if (!av[n])
+		av[_n] = malloc(sizeof(**av) * (len + 1));
+		if (!av[_n])
+		{
+			free_a(av, n);
 			exit(EXIT_FAILURE);
+		}
 
-		strncpy(av[n], word, len);
-		if (av[n][len - 1] == '\n')
-			av[n][len - 1] = '\0';
+		strncpy(av[_n], word, len);
+		if (av[_n][len - 1] == '\n')
+			av[_n][len - 1] = '\0';
 		word = strtok(NULL, delim);
-		n++;
+		_n++;
 	}
-	av[n] = NULL;
+	av[_n] = NULL;
 	return (av);
 }
