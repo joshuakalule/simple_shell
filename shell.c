@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
 		{
 			/*parent*/
 			wait(&status);
+			if (!isatty(STDIN_FILENO))
+				break;
 		}
 		free_av(av);
 		free(lineptr);
