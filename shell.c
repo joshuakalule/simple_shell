@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	size_t n, len, line_no;
 	char **av;
 	int status, EXIT_STATUS;
-	int i;
+	/*int i;*/
 	pid_t child;
 	listchar_t *pathlist = makepathlist();
 
