@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
 		if (!av || !*av)
 		{
 			free(lineptr);
+			free_av(av);
 			n = 0;
 			continue;
 		}
