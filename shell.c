@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 	int status;
 	/*int i;*/
 	pid_t child;
+	listchar_t *pathlist = makepathlist();
 
 	if (argc != 1)
 		exit(EXIT_FAILURE);
@@ -31,7 +32,11 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		if (getline(&lineptr, &n, stdin) == -1)
-			break;
+		{
+			free(lineptr);
+			n = 0;
+			continue;
+		}
 		len = strlen(lineptr);
 		if (len > 0 && lineptr[len - 1] == '\n')
 			lineptr[len - 1] = '\0';
@@ -40,8 +45,21 @@ int main(int argc, char *argv[])
 
 		av = line_to_av(lineptr);
 		if (!av || !*av)
-			break;
-
+		{
+			free(lineptr);
+			n = 0;
+			continue;
+		}
+		/* av[0] may be changed here */
+		if (check_in_path(av, pathlist) != 0)
+		{
+			free_av(av);
+			free(lineptr);
+			av = NULL;
+			n = 0;
+			perror(argv[0]);
+			continue;
+		}
 		/**
 		*printf("av: ");
 		*for (i = 0; av[i] != NULL; i++)
@@ -71,5 +89,6 @@ int main(int argc, char *argv[])
 	}
 	free_av(av);
 	free(lineptr);
+	free_list(pathlist);
 	return (EXIT_SUCCESS);
 }
