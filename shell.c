@@ -19,11 +19,12 @@ int main(int argc, char *argv[])
 	char *lineptr;
 	size_t n, len, line_no;
 	char **av;
-	int status;
+	int status, EXIT_STATUS;
 	/*int i;*/
 	pid_t child;
 	listchar_t *pathlist = makepathlist();
 
+	EXIT_STATUS = EXIT_SUCCESS;
 	if (argc != 1)
 		exit(EXIT_FAILURE);
 	lineptr = NULL;
@@ -64,6 +65,7 @@ int main(int argc, char *argv[])
 			free(lineptr);
 			av = NULL;
 			n = 0;
+			EXIT_STATUS = 127;
 			continue;
 		}
 		/**
@@ -96,5 +98,5 @@ int main(int argc, char *argv[])
 	free_av(av);
 	free(lineptr);
 	free_list(pathlist);
-	return (EXIT_SUCCESS);
+	return (EXIT_STATUS);
 }
