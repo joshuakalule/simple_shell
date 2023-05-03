@@ -17,7 +17,7 @@
 int main(int argc, char *argv[])
 {
 	char *lineptr;
-	size_t n, len;
+	size_t n, len, line_no;
 	char **av;
 	int status;
 	/*int i;*/
@@ -29,8 +29,11 @@ int main(int argc, char *argv[])
 	lineptr = NULL;
 	av = NULL;
 	n = 0;
+	line_no = 0;
 	while (1)
 	{
+		(!isatty(STDIN_FILENO)) ? (line_no++) : (line_no = line_no);
+
 		if (getline(&lineptr, &n, stdin) == -1)
 		{
 			if (!isatty(STDIN_FILENO))
@@ -56,11 +59,11 @@ int main(int argc, char *argv[])
 		/* av[0] may be changed here */
 		if (check_in_path(av, pathlist) != 0)
 		{
+		dprintf(STDERR_FILENO, "%s: %lu: %s: not found\n", argv[0], line_no, av[0]);
 			free_av(av);
 			free(lineptr);
 			av = NULL;
 			n = 0;
-			perror(argv[0]);
 			continue;
 		}
 		/**
