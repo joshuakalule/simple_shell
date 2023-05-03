@@ -6,8 +6,6 @@
 	perror(argv[0]);\
 	exit(EXIT_FAILURE); }
 
-extern char **environ;
-
 /**
  * main - entry point of the program
  * @argc: number of arguments passed
@@ -41,11 +39,10 @@ int main(int argc, char *argv[])
 			break;
 
 		av = line_to_av(lineptr);
-		if (!av)
+		if (!av || !*av)
 			break;
+
 		/**
-		*if (!av || !*av)
-		*	break;
 		*printf("av: ");
 		*for (i = 0; av[i] != NULL; i++)
 		*	printf("'%s' ", av[i]);

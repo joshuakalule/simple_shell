@@ -12,6 +12,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+extern char **environ;
 char **line_to_av(char *);
 void free_av(char **);
 
