@@ -21,6 +21,31 @@ void free_list(listchar_t *head)
 	}
 }
 
+
+/**
+ * checklist - checks if str is a dir in list
+ * @head: pointer to list
+ * @str: str being looked for
+ *
+ * Return: 0 (FOUND) | -1 (NOT FOUND)
+ */
+int checklist(listchar_t *head, char *str)
+{
+	listchar_t *tmp;
+
+	if (!head)
+		return (-1);
+
+	tmp = head;
+	while (tmp)
+	{
+		if (strcmp(str, tmp->dir) == 0)
+			return (0);
+		tmp = tmp->next;
+	}
+	return (-1);
+}
+
 /**
  * add_node_end - add node to the end of list
  * @head: address of pointer to list

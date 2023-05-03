@@ -10,7 +10,6 @@
  * main - entry point of the program
  * @argc: number of arguments passed
  * @argv: array of arguments passed
- * @env: array of evironment variables
  *
  * Return: 0 (Success)
  */
@@ -20,7 +19,7 @@ int main(int argc, char *argv[])
 	size_t n, len, line_no;
 	char **av;
 	int status, EXIT_STATUS;
-	/*int i;*/
+	int i;
 	pid_t child;
 	listchar_t *pathlist = makepathlist();
 
@@ -33,6 +32,7 @@ int main(int argc, char *argv[])
 	line_no = 0;
 	while (1)
 	{
+		EXIT_STATUS = EXIT_SUCCESS;
 		(!isatty(STDIN_FILENO)) ? (line_no++) : (line_no = line_no);
 
 		if (getline(&lineptr, &n, stdin) == -1)
@@ -74,7 +74,6 @@ int main(int argc, char *argv[])
 		*	printf("'%s' ", av[i]);
 		*printf("\n-----------------------------------------\n");
 		*/
-
 		child = fork();
 		if (child == 0)
 		{
