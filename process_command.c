@@ -27,57 +27,27 @@ int add_path_to_cmd(char **av, char *new_cmd)
 	return (0);
 }
 
-/**
- * path_in_PATH - checks if the path of a cmd is in PATH
- * @_cmd: command
- * @head: path linked list
- *
- * Description:
- * e.g cmd = '/usr/bin/ls'
- * checks if '/usr/bin' is in PATH
- *
- * Return: 0 (FOUND) | -1 (NOT FOUND)
- */
-int path_in_PATH(char *_cmd, listchar_t *head)
+
+int check_cmd(char *_cmd)
 {
-	char ch = '/';
-	char *token, *tmp;
-	char path[1024] = "\0";
-	char *cmd = strdup(_cmd);
+	char *cmd;
+	const char *ch = "/";
+	int starts_with_ch = 0;
 
-	if (!cmd || !head)
-	{
-		free(cmd);
+	if (!_cmd)
 		return (-1);
-	}
-	if (strchr(cmd, ch) == NULL)
+	cmd = strdup(_cmd);
+	if (cmd[0] == *ch)
+		starts_with_ch = 1;
+	
+	if (strchr(cmd, '.') == NULL && starts_with_ch == 0)
 	{
 		free(cmd);
-		return (-1);
-	}
-
-	token = NULL;
-	token = strtok(cmd, &ch);
-	while (token)
-	{
-		tmp = strtok(NULL, &ch);
-		if (tmp == NULL)
-			break;
-		if (path[0] != '\0')
-			strcat(path, "/");
-		else
-			path[0] = '/';
-		strcat(path, token);
-		token = tmp;
-	}
-
-	/*printf("path: %s\n", path);*/
-	if (checklist(head, path) == 0)
-	{
-		free(cmd);
-		return (0);
+		return (1);
 	}
 	free(cmd);
+	if (access(_cmd, F_OK | X_OK) == 0)
+		return (0);
 	return (-1);
 }
 
@@ -94,17 +64,25 @@ int check_in_path(char **av, listchar_t *head)
 	char *cmd, *n_cmd;
 	size_t c_len, o_len, n_len;
 	listchar_t *tmp;
+	int cmd_pass;
 
 	if (!av || !*av)
 		return (-1);
 	cmd = strdup(av[0]);
 	if (!cmd)
 		return (-1);
-	if ((path_in_PATH(cmd, head) == 0) && (access(cmd, F_OK | X_OK) == 0))
+	cmd_pass = check_cmd(cmd);
+	if (cmd_pass == 0)
 	{
 		free(cmd);
 		return (0);
 	}
+	else if (cmd_pass == -1)
+	{
+		free(cmd);
+		return (-1);
+	}
+
 	tmp = head;
 	c_len = strlen(cmd);
 	o_len = c_len;
