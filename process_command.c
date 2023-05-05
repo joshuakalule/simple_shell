@@ -28,25 +28,17 @@ int add_path_to_cmd(char **av, char *new_cmd)
 }
 
 
-int check_cmd(char *_cmd)
+int check_cmd(char *cmd)
 {
-	char *cmd;
-	const char *ch = "/";
-	int starts_with_ch = 0;
-
-	if (!_cmd)
+	if (!cmd)
 		return (-1);
-	cmd = strdup(_cmd);
-	if (cmd[0] == *ch)
-		starts_with_ch = 1;
 	
-	if (strchr(cmd, '.') == NULL && starts_with_ch == 0)
+	if (strchr(cmd, '.') == NULL && cmd[0] != '/')
 	{
 		free(cmd);
 		return (1);
 	}
-	free(cmd);
-	if (access(_cmd, F_OK | X_OK) == 0)
+	if (access(cmd, F_OK | X_OK) == 0)
 		return (0);
 	return (-1);
 }
