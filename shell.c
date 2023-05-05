@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
 				perror(argv[0]);
 				break;
 			}
+			EXIT_STATUS = EXIT_SUCCESS;
 		}
 		else
 		{
