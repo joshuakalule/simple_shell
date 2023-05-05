@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
 	line_no = 0;
 	while (1)
 	{
-		EXIT_STATUS = EXIT_SUCCESS;
 		(!isatty(STDIN_FILENO)) ? (line_no++) : (line_no = line_no);
 
 		if (getline(&lineptr, &n, stdin) == -1)
