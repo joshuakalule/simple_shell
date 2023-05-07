@@ -34,10 +34,7 @@ int check_cmd(char *cmd)
 		return (-1);
 	
 	if (strchr(cmd, '.') == NULL && cmd[0] != '/')
-	{
-		free(cmd);
 		return (1);
-	}
 	if (access(cmd, F_OK | X_OK) == 0)
 		return (0);
 	return (-1);
