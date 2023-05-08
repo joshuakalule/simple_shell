@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 	pid_t child;
 	listchar_t *pathlist = makepathlist();
 
+	status = EXIT_SUCCESS;
 	EXIT_STATUS = EXIT_SUCCESS;
 	if (argc != 1)
 		exit(EXIT_FAILURE);
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
 			lineptr[len - 1] = '\0';
 		if (strncmp("exit", lineptr, 4) == 0)
 		{
+			(status == 0) ? (EXIT_STATUS = 0) : (EXIT_STATUS = 2);
 			break;
 		}
 
