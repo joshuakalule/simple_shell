@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
 			lineptr[len - 1] = '\0';
 		if (strncmp("exit", lineptr, 4) == 0)
 		{
+			EXIT_STATUS = 2;
 			break;
 		}
 
@@ -91,8 +92,6 @@ int main(int argc, char *argv[])
 		{
 			/*parent*/
 			wait(&status);
-			printf("------EXIT_STATUS:   %i     ----------\n", status);
-			EXIT_STATUS = status;
 		}
 		free_av(av);
 		free(lineptr);
