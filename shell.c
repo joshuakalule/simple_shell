@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
 			lineptr[len - 1] = '\0';
 		if (strncmp("exit", lineptr, 4) == 0)
 		{
-			EXIT_STATUS = 2;
 			break;
 		}
 
