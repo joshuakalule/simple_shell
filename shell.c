@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
 		{
 			free(lineptr);
 			free_av(av);
+			av = NULL;
 			n = 0;
 			continue;
 		}
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
 		{
 			/*parent*/
 			wait(&status);
+			printf("------EXIT_STATUS:   %i     ----------\n", status);
 			EXIT_STATUS = status;
 		}
 		free_av(av);
