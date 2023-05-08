@@ -51,6 +51,11 @@ int main(int argc, char *argv[], char **env)
 			(status == 0) ? (EXIT_STATUS = 0) : (EXIT_STATUS = 2);
 			break;
 		}
+		if (strncmp("env", lineptr, 3) == 0)
+		{
+			printenv();
+			continue;
+		}
 
 		av = line_to_av(lineptr);
 		if (!av || !*av)
@@ -82,7 +87,8 @@ int main(int argc, char *argv[], char **env)
 		if (child == 0)
 		{
 			/*child*/
-			if (execve(av[0], av, env) == -1)
+			printf("env[0]: %s\n", env[0]);
+			if (execve(av[0], av, environ) == -1)
 			{
 				perror(argv[0]);
 				break;
