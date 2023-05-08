@@ -53,7 +53,7 @@ int main(int argc, char *argv[], char **env)
 		}
 		if (strncmp("env", lineptr, 3) == 0)
 		{
-			printenv();
+			printenv(env);
 			continue;
 		}
 

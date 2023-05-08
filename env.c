@@ -1,9 +1,12 @@
 #include "main.h"
 
-void printenv(void)
+void printenv(char **env)
 {
-	char **env = environ;
-
+	if (!*env)
+	{
+		printf("SHLVL=0\n");
+		return;
+	}
 	while (*env)
 	{
 		printf("%s\n", *env);

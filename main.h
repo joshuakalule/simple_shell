@@ -34,6 +34,6 @@ listchar_t *add_node_end(listchar_t **, char *);
 int add_path_to_cmd(char **, char *);
 int check_in_path(char **, listchar_t *);
 int checklist(listchar_t *head, char *str);
-void printenv(void);
+void printenv(char **);
 
 #endif /* _MAIN_H_ */
