@@ -13,7 +13,7 @@
  *
  * Return: 0 (Success)
  */
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char **env)
 {
 	char *lineptr;
 	size_t n, len, line_no;
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 		if (child == 0)
 		{
 			/*child*/
-			if (execve(av[0], av, environ) == -1)
+			if (execve(av[0], av, env) == -1)
 			{
 				perror(argv[0]);
 				break;
