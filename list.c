@@ -14,6 +14,7 @@ void free_list(listchar_t *head)
 	while (1)
 	{
 		next_node = current->next;
+		free(current->dir);
 		free(current);
 		current = next_node;
 		if (!current)
@@ -60,7 +61,7 @@ listchar_t *add_node_end(listchar_t **head, char *dir)
 	new = malloc(sizeof(listchar_t));
 	if (!head || !new)
 		return (NULL);
-	new->dir = dir;
+	new->dir = strdup(dir);
 	new->next = NULL;
 
 	parent = NULL;
@@ -92,7 +93,7 @@ listchar_t *add_node(listchar_t **head, char *dir)
 	new = malloc(sizeof(listchar_t));
 	if (!head || !new)
 		return (NULL);
-	new->dir = dir;
+	new->dir = strdup(dir);
 	new->prev = NULL;
 	new->next = *head;
 	if (*head)
@@ -112,15 +113,19 @@ listchar_t *makepathlist(void)
 	char *delims = ":";
 
 	pathlist = NULL;
-	path = getenv("PATH");
-	if (!path)
+	path = NULL;
+	path = strdup(getenv("PATH"));
+	if (!*path)
 		return (NULL);
 	dir = strtok(path, delims);
 	while (dir)
 	{
 		if (add_node_end(&pathlist, dir) == NULL)
+		{
 			return (NULL);
+		}
 		dir = strtok(NULL, delims);
 	}
+	free(path);
 	return (pathlist);
 }
