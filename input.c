@@ -17,16 +17,15 @@ char **tokenize(size_t *cmdc, char *line)
 		return (NULL);
 
 	cmdv = NULL;
-	*cmdc = 1;
-	cmdv = malloc(sizeof(*cmdv) * (*cmdc));
-	if (!cmdv)
-		return (NULL);
-
-	cmdv[0] = strdup("./hsh");
+	*cmdc = 0;
 	token = strtok(line, delim);
 	while (token != NULL)
 	{
-		cmdv = realloc(cmdv, sizeof(*cmdv) * (++(*cmdc)));
+		if (cmdv == NULL)
+			cmdv = malloc(sizeof(*cmdv) * (++(*cmdc)));
+		else
+			cmdv = realloc(cmdv, sizeof(*cmdv) * (++(*cmdc)));
+
 		if (!cmdv)
 			return (NULL);
 
@@ -36,7 +35,6 @@ char **tokenize(size_t *cmdc, char *line)
 
 	return (cmdv);
 }
-
 
 /**
  * get_user_input - get input from the user
@@ -51,6 +49,8 @@ char **get_user_input(size_t *cmdc)
 	ssize_t nread;
 	char **cmdv = NULL;
 
+	size_t *unused1 __attribute__((unused)) = cmdc;
+
 	nread = getline(&line, &len_line, stdin);
 	if (nread == -1)
 	{
@@ -60,8 +60,17 @@ char **get_user_input(size_t *cmdc)
 	}
 
 	/* tokenize the line */
-	cmdv = tokenize(cmdc, line);
-	free(line);
+	/* cmdv = tokenize(cmdc, line); */
 
+	*cmdc = 1;
+	cmdv = malloc(sizeof(*cmdv) * 2);
+	if (!cmdv)
+		return (NULL);
+
+	line[nread - 1] = '\0';
+	cmdv[0] = strdup(line);
+	cmdv[1] = NULL;
+
+	free(line);
 	return (cmdv);
 }
