@@ -1,35 +1,14 @@
 #include "main.h"
 
 /**
- * search - looks for commands
- * @cmdv: array of commands
- * @cmdc: number of command tokens
- *
- * Return: 0 (Found) else NOT FOUND
- */
-int search(char **cmdv, size_t *cmdc)
-{
-	size_t *unused1 __attribute__((unused)) = cmdc;
-
-	/* the command in pos 1 is the main command, rest are arguments */
-	/* e.g. './hsh', 'ls', '-l' */
-
-	if (access(cmdv[1], F_OK) != 0)
-	{
-		fprintf(stderr, "%s: No such file or directory\n", cmdv[0]);
-		return (1);
-	}
-
-	return (0);
-}
-
-/**
  * display_prompt - print the prompt on the stdout
  * @prompt: text to print
  */
 void display_prompt(char *prompt)
 {
-	if (isatty(STDIN_FILENO) == 1)
+	/* if non-interactive mode, do not display */
+	if (isatty(STDIN_FILENO) == 0)
+		return;
 
 	if (prompt == NULL)
 		exit(EXIT_FAILURE);
@@ -78,18 +57,17 @@ int main(int ac, char *av[], char *envp[])
 	int unused1 __attribute__((unused)) = ac;
 	char **unused2 __attribute__((unused)) = av;
 	char **unused3 __attribute__((unused)) = envp;
-
 	while (1)
 	{
 		/* display prompt */
 		display_prompt(prompt);
 		/* get_user input and tokenize into cmdv */
 		cmdv = get_user_input(&cmdc);
-
-		/* EOF */
 		if (cmdv == NULL)
 		{
-			write(STDOUT_FILENO, "\n", 1);
+			if (isatty(STDIN_FILENO) == 1)
+				write(STDOUT_FILENO, "\n", 1);
+			cleanup(cmdv, &cmdc);
 			break;
 		}
 		/* parse the commands in cmdv */
@@ -98,10 +76,16 @@ int main(int ac, char *av[], char *envp[])
 		/* search for the command */
 		if (search(cmdv, &cmdc) != 0)
 		{
-			/* BREAK(mode); */
+			cleanup(cmdv, &cmdc);
 			continue;
 		}
 		/* execute command*/
+		if (execute(cmdv, &cmdc) != 0)
+		{
+			cleanup(cmdv, &cmdc);
+			continue;
+		}
+		cleanup(cmdv, &cmdc);
 	}
 	cleanup(cmdv, &cmdc);
 	free(prompt);
