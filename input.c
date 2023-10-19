@@ -9,32 +9,32 @@
  */
 char **tokenize(size_t *cmdc, char *line)
 {
-    char **cmdv;
-    char *token = NULL;
-    char *delim = " \n";
+	char **cmdv;
+	char *token = NULL;
+	char *delim = " \n";
 
-    if (!line)
-        return (NULL);
+	if (!line)
+		return (NULL);
 
-    cmdv = NULL;
-    *cmdc = 1;
-    cmdv = malloc(sizeof(*cmdv) * (*cmdc));
-    if (!cmdv)
-        return (NULL);
+	cmdv = NULL;
+	*cmdc = 1;
+	cmdv = malloc(sizeof(*cmdv) * (*cmdc));
+	if (!cmdv)
+		return (NULL);
 
-    cmdv[0] = strdup("./hsh");
-    token = strtok(line, delim);
-    while (token != NULL)
-    {
-        cmdv = realloc(cmdv, sizeof(*cmdv) * (++(*cmdc)));
-        if (!cmdv)
-            return (NULL);
+	cmdv[0] = strdup("./hsh");
+	token = strtok(line, delim);
+	while (token != NULL)
+	{
+		cmdv = realloc(cmdv, sizeof(*cmdv) * (++(*cmdc)));
+		if (!cmdv)
+			return (NULL);
 
-        cmdv[(*cmdc) - 1] = strdup(token);
-        token = strtok(NULL, delim);
-    }
+		cmdv[(*cmdc) - 1] = strdup(token);
+		token = strtok(NULL, delim);
+	}
 
-    return (cmdv);
+	return (cmdv);
 }
 
 
@@ -46,22 +46,22 @@ char **tokenize(size_t *cmdc, char *line)
  */
 char **get_user_input(size_t *cmdc)
 {
-    char *line = NULL;
-    size_t len_line = 0;
-    ssize_t nread;
-    char **cmdv = NULL;
+	char *line = NULL;
+	size_t len_line = 0;
+	ssize_t nread;
+	char **cmdv = NULL;
 
-    nread = getline(&line, &len_line, stdin);
-    if (nread == -1)
-    {
-        /* EOF */
-        free(line);
-        return (NULL);
-    }
+	nread = getline(&line, &len_line, stdin);
+	if (nread == -1)
+	{
+		/* EOF */
+		free(line);
+		return (NULL);
+	}
 
-    /* tokenize the line */
-    cmdv = tokenize(cmdc, line);
-    free(line);
+	/* tokenize the line */
+	cmdv = tokenize(cmdc, line);
+	free(line);
 
-    return (cmdv);
+	return (cmdv);
 }
