@@ -34,6 +34,7 @@ int execute(char **cmdv, size_t *cmdc)
 	{
 		/* this executes within the parent process */
 		wait(&status);
+		return (status);
 	}
 	return (0);
 }
