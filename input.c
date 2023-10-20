@@ -60,17 +60,12 @@ char **get_user_input(size_t *cmdc)
 	}
 
 	/* tokenize the line */
-	/* cmdv = tokenize(cmdc, line); */
-
-	*cmdc = 1;
-	cmdv = malloc(sizeof(*cmdv) * 2);
-	if (!cmdv)
+	cmdv = split(cmdc, line, " \n");
+	if (cmdv == NULL)
+	{
+		free(line);
 		return (NULL);
-
-	line[nread - 1] = '\0';
-	cmdv[0] = strdup(line);
-	cmdv[1] = NULL;
-
+	}
 	free(line);
 	return (cmdv);
 }

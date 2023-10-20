@@ -15,9 +15,6 @@ extern char **environ;
 char **tokenize(size_t *cmdc, char *line);
 char **get_user_input(size_t *cmdc);
 
-/* utilities.c */
-char **cp_av_cmdv(size_t *ndest, char **src, int nsrc);
-
 /* parser.c */
 int parse(char **argv, size_t *cmdc);
 
@@ -26,5 +23,10 @@ int search(char **cmdv, size_t *cmdc);
 
 /* execute.c */
 int execute(char **cmdv, size_t *cmdc);
+
+/* utilities.c */
+void free_array(char **array, size_t *narray);
+int check(char, char *);
+char **split(size_t *arraylen, char *line, char *delim);
 
 #endif /* _MAIN_H_ */
