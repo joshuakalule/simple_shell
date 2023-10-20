@@ -98,6 +98,7 @@ int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof,
 		if (strncmp(cmdv[0], "exit", strlen("exit")) == 0)
 		{
 			*eof = 1;
+			*status = (cmdv[1]) ? atoi(cmdv[1]) : *status;
 			return (1);
 		}
 		else if (strncmp(cmdv[0], "env", strlen("env")) == 0)
