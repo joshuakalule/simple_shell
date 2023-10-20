@@ -11,6 +11,17 @@
 
 extern char **environ;
 
+/**
+ * struct dir_s - linked list of the PATH directories
+ * @str: directory str
+ * @next: pointer to the next directory
+ */
+typedef struct dir_s
+{
+	char *str;
+	struct dir_s *next;
+} dir_t;
+
 /* input.c */
 char **tokenize(size_t *cmdc, char *line);
 char **get_user_input(size_t *cmdc);
@@ -28,5 +39,9 @@ int execute(char **cmdv, size_t *cmdc);
 void free_array(char **array, size_t *narray);
 int check(char, char *);
 char **split(size_t *arraylen, char *line, char *delim);
+
+/* path.c */
+void free_list(dir_t *head);
+dir_t *get_path_list();
 
 #endif /* _MAIN_H_ */
