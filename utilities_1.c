@@ -81,16 +81,14 @@ char **add_token(char **arr, size_t *narr, char *buf, size_t *nb)
  * @arraylen: pointer to the length of the created array
  * @line: string to split
  * @delim: characters to split at
- * @status: pointer to the status code
  *
  * Return: null terminated array of tokens split from line
  */
-char **split(size_t *arraylen, char *line, char *delim, int *status)
+char **split(size_t *arraylen, char *line, char *delim)
 {
 	char *buf = NULL, **arr = NULL;
 	size_t bufsize = 0, i = 0, n = 0;
 
-	*status = 1;
 	if (!delim || !*delim)
 		return (NULL);
 	for (;; i++)
@@ -124,7 +122,6 @@ char **split(size_t *arraylen, char *line, char *delim, int *status)
 			return (NULL);
 		arr[n] = NULL;
 	}
-	*status = 0;
 	*arraylen = n;
 	return (arr);
 }

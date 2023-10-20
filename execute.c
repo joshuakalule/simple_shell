@@ -4,10 +4,11 @@
  * execute - execute commands
  * @cmdv: array of commands
  * @cmdc: number of command tokens
+ * @status_code: pointer to the status code
  *
  * Return: 0(SUCCESS)
  */
-int execute(char **cmdv, size_t *cmdc)
+int execute(char **cmdv, size_t *cmdc, int *status_code)
 {
 	pid_t child_pid;
 	int status;
@@ -34,6 +35,10 @@ int execute(char **cmdv, size_t *cmdc)
 	{
 		/* this executes within the parent process */
 		wait(&status);
+		if (status == 512)
+			*status_code = 2;
+		else
+			*status_code = 0;
 		return (status);
 	}
 	return (0);

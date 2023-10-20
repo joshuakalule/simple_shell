@@ -50,14 +50,16 @@ int check_in_path(char *cmd, char abs_cmd[])
  * search - looks for commands
  * @cmdv: array of commands
  * @cmdc: number of command tokens
+ * @line: line number
  * @status: pointer to status code
+ * @eof: pointer to eof variable
  *
  * Return: 0 (FOUND) else NOT found
  *
  * Description:
  * cmdv: 'cmd' 'arg1' 'arg2' ...
  */
-int search(char **cmdv, size_t *cmdc, int *status)
+int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof)
 {
 	char abs_cmd[CMDLEN] = {'\0'};
 
@@ -80,11 +82,12 @@ int search(char **cmdv, size_t *cmdc, int *status)
 	{
 		if (strncmp(cmdv[0], "exit", strlen("exit")) == 0)
 		{
-			*status = 1;
+			*eof = 1;
 			return (1);
 		}
 	}
 
-	fprintf(stderr, "./hsh: No such file or directory\n");
+	*status = 127;
+	fprintf(stderr, "./hsh: %d: %s: not found\n", line, cmdv[0]);
 	return (1);
 }

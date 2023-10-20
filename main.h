@@ -23,22 +23,21 @@ typedef struct dir_s
 } dir_t;
 
 /* input.c */
-char **tokenize(size_t *cmdc, char *line);
-char **get_user_input(size_t *cmdc, int *status);
+char **get_user_input(size_t *cmdc, int *eof);
 
 /* parser.c */
 int parse(char **argv, size_t *cmdc);
 
 /* search.c */
-int search(char **cmdv, size_t *cmdc, int *status);
+int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof);
 
 /* execute.c */
-int execute(char **cmdv, size_t *cmdc);
+int execute(char **cmdv, size_t *cmdc, int *status);
 
 /* utilities.c */
 void free_array(char **array, size_t *narray);
 int check(char, char *);
-char **split(size_t *arraylen, char *line, char *delim, int *status);
+char **split(size_t *arraylen, char *line, char *delim);
 
 /* path.c */
 void free_list(dir_t *head);

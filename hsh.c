@@ -52,8 +52,9 @@ int main(int ac, char *av[], char *envp[])
 {
 	char **cmdv = NULL, *prompt = strdup("($) ");
 	size_t cmdc = 0; /* length of cmdv array */
-	int status = 0; /* 0 - ok, 1 - exit */
-	int exit_code = 0;
+	int status = 0; /* return code of previous command */
+	int eof = 0; /* 0 - got to next command, 1 - EOF */
+	int nline = 0;
 
 	int unused1 __attribute__((unused)) = ac;
 	char **unused2 __attribute__((unused)) = av;
@@ -62,15 +63,16 @@ int main(int ac, char *av[], char *envp[])
 	{
 		/* pre-cleanuo */
 		cleanup(cmdv, &cmdc);
-		if (status == 1)
+		if (eof == 1)
 			break;
 
 		display_prompt(prompt);
 		/* get_user input and tokenize into cmdv */
-		cmdv = get_user_input(&cmdc, &status);
+		cmdv = get_user_input(&cmdc, &eof);
+		nline++;
 		if (cmdv == NULL)
 		{
-			if (isatty(STDIN_FILENO) == 1 && status == 1)
+			if (isatty(STDIN_FILENO) == 1 && eof == 1)
 				write(STDOUT_FILENO, "\n", 1);
 			continue;
 		}
@@ -78,16 +80,13 @@ int main(int ac, char *av[], char *envp[])
 		if (parse(cmdv, &cmdc) != 0)
 			break;
 		/* search for the command */
-		if (search(cmdv, &cmdc, &status) != 0)
+		if (search(cmdv, &cmdc, nline, &status, &eof) != 0)
 			continue;
 		/* execute command*/
-		if (execute(cmdv, &cmdc) != 0)
-		{
-			exit_code = 2;
+		if (execute(cmdv, &cmdc, &status) != 0)
 			continue;
-		}
 	}
 	cleanup(cmdv, &cmdc);
 	free(prompt);
-	return (exit_code);
+	return (status);
 }

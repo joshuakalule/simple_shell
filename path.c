@@ -75,9 +75,8 @@ dir_t *get_path_list()
 	dir_t *head = NULL;
 	size_t npaths = 0;
 	size_t i;
-	int status = 0;
 
-	path_dirs = split(&npaths, pathstr, ":", &status);
+	path_dirs = split(&npaths, pathstr, ":");
 	if (path_dirs == NULL)
 		return (NULL);
 
