@@ -76,7 +76,7 @@ int handle_exit(char **cmdv, int line, int *status)
 		return (0);
 
 	num = atoi(cmdv[1]);
-	if (num == 0)
+	if (num <= 0)
 	{
 		fprintf(stderr, "./hsh: %d: %s: Illegal number: %s\n", line, cmdv[0],
 				cmdv[1]);
