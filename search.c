@@ -5,17 +5,30 @@
 /* search for cmds */
 
 /**
+ * print_env - print the environment
+ * @env: environment
+ */
+void print_env(char **env)
+{
+	size_t i;
+
+	for (i = 0; env[i] != NULL; i++)
+		fprintf(stdout, "%s\n", env[i]);
+}
+
+/**
  * check_in_path - checks for cmd in path
  * @cmd: command to check for
  * @abs_cmd: found command
+ * @env: environment
  *
  * Return: 0 (SUCCESS) | 1 (FAIL)
  */
-int check_in_path(char *cmd, char abs_cmd[])
+int check_in_path(char *cmd, char abs_cmd[], char **env)
 {
 	char *dir = NULL;
 	dir_t *path_node;
-	dir_t *pathlist = get_path_list();
+	dir_t *pathlist = get_path_list(env);
 
 	if (!cmd || !pathlist)
 		return (1);
@@ -53,13 +66,15 @@ int check_in_path(char *cmd, char abs_cmd[])
  * @line: line number
  * @status: pointer to status code
  * @eof: pointer to eof variable
+ * @env: environment
  *
  * Return: 0 (FOUND) else NOT found
  *
  * Description:
  * cmdv: 'cmd' 'arg1' 'arg2' ...
  */
-int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof)
+int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof,
+		char **env)
 {
 	char abs_cmd[CMDLEN] = {'\0'};
 
@@ -71,7 +86,7 @@ int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof)
 		return (0);
 	}
 	/* 2. command is executable in the path */
-	else if (check_in_path(cmdv[0], abs_cmd) == 0)
+	else if (check_in_path(cmdv[0], abs_cmd, env) == 0)
 	{
 		free(cmdv[0]);
 		cmdv[0] = strdup(abs_cmd);
@@ -83,6 +98,12 @@ int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof)
 		if (strncmp(cmdv[0], "exit", strlen("exit")) == 0)
 		{
 			*eof = 1;
+			return (1);
+		}
+		else if (strncmp(cmdv[0], "env", strlen("env")) == 0)
+		{
+			print_env(env);
+			*status = 0;
 			return (1);
 		}
 	}

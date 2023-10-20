@@ -79,7 +79,7 @@ int main(int ac, char *av[], char *env[])
 		if (parse(cmdv, &cmdc) != 0)
 			break;
 		/* search for the command */
-		if (search(cmdv, &cmdc, nline, &status, &eof) != 0)
+		if (search(cmdv, &cmdc, nline, &status, &eof, env) != 0)
 			continue;
 		/* execute command*/
 		if (execute(cmdv, &cmdc, env, &status) != 0)

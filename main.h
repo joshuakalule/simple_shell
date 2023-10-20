@@ -29,18 +29,25 @@ char **get_user_input(size_t *cmdc, int *eof);
 int parse(char **argv, size_t *cmdc);
 
 /* search.c */
-int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof);
+int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof,
+		char **env);
 
 /* execute.c */
 int execute(char **cmdv, size_t *cmdc, char **env, int *status);
 
-/* utilities.c */
+/* utilities_1.c */
 void free_array(char **array, size_t *narray);
 int check(char, char *);
 char **split(size_t *arraylen, char *line, char *delim);
 
+/* utilities_2.c */
+void free_ptr(char *ptr);
+
 /* path.c */
 void free_list(dir_t *head);
-dir_t *get_path_list();
+dir_t *get_path_list(char **env);
+
+/* path_1.c */
+char *mygetenv(char *var, char **env);
 
 #endif /* _MAIN_H_ */

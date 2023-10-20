@@ -65,24 +65,31 @@ dir_t *add_node_end(dir_t **head, char *dirstr)
 
 /**
  * get_path_list - generate a singly linked list of the PATH directories
+ * @env: environment
  *
  * Return: pointer to the first node of the linked list
  */
-dir_t *get_path_list()
+dir_t *get_path_list(char **env)
 {
-	char *pathstr = getenv("PATH");
-	char **path_dirs = NULL;
+	char *pathstr = NULL, **path_dirs = NULL;
 	dir_t *head = NULL;
-	size_t npaths = 0;
-	size_t i;
+	size_t npaths = 0, i;
+
+	pathstr = mygetenv("PATH", env);
+	if (pathstr == NULL)
+		return (NULL);
 
 	path_dirs = split(&npaths, pathstr, ":");
 	if (path_dirs == NULL)
+	{
+		free_ptr(pathstr);
 		return (NULL);
+	}
 
 	for (i = 0; i < npaths; i++)
 		add_node_end(&head, path_dirs[i]);
 
+	free_ptr(pathstr);
 	free_array(path_dirs, &npaths);
 	return (head);
 }
