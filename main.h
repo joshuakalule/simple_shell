@@ -24,13 +24,13 @@ typedef struct dir_s
 
 /* input.c */
 char **tokenize(size_t *cmdc, char *line);
-char **get_user_input(size_t *cmdc);
+char **get_user_input(size_t *cmdc, int *status);
 
 /* parser.c */
 int parse(char **argv, size_t *cmdc);
 
 /* search.c */
-int search(char **cmdv, size_t *cmdc);
+int search(char **cmdv, size_t *cmdc, int *status);
 
 /* execute.c */
 int execute(char **cmdv, size_t *cmdc);
@@ -38,7 +38,7 @@ int execute(char **cmdv, size_t *cmdc);
 /* utilities.c */
 void free_array(char **array, size_t *narray);
 int check(char, char *);
-char **split(size_t *arraylen, char *line, char *delim);
+char **split(size_t *arraylen, char *line, char *delim, int *status);
 
 /* path.c */
 void free_list(dir_t *head);

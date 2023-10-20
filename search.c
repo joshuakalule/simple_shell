@@ -50,37 +50,38 @@ int check_in_path(char *cmd, char abs_cmd[])
  * search - looks for commands
  * @cmdv: array of commands
  * @cmdc: number of command tokens
+ * @status: pointer to status code
  *
  * Return: 0 (FOUND) else NOT found
  *
  * Description:
  * cmdv: 'cmd' 'arg1' 'arg2' ...
  */
-int search(char **cmdv, size_t *cmdc)
+int search(char **cmdv, size_t *cmdc, int *status)
 {
 	char abs_cmd[CMDLEN] = {'\0'};
 
 	size_t *unused1 __attribute__((unused)) = cmdc;
 
-	/**
-	 * 1. check if the command exists and is executable as is
-	 */
+	/* 1. command exists and is executable as is */
 	if (access(cmdv[0], F_OK | X_OK) == 0)
 	{
-		/* cmd exists and is executable */
 		return (0);
 	}
-	/**
-	 * 2. check if the command exists and is executable in the directories
-	 * in path
-	 */
+	/* 2. command is executable in the path */
+	else if (check_in_path(cmdv[0], abs_cmd) == 0)
+	{
+		free(cmdv[0]);
+		cmdv[0] = strdup(abs_cmd);
+		return (0);
+	}
+	/* 3. cammand is special case */
 	else
 	{
-		if (check_in_path(cmdv[0], abs_cmd) == 0)
+		if (strncmp(cmdv[0], "exit", strlen("exit")) == 0)
 		{
-			free(cmdv[0]);
-			cmdv[0] = strdup(abs_cmd);
-			return (0);
+			*status = 1;
+			return (1);
 		}
 	}
 

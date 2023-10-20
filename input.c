@@ -39,10 +39,10 @@ char **tokenize(size_t *cmdc, char *line)
 /**
  * get_user_input - get input from the user
  * @cmdc: pointer to the number of tokens found in input
- *
+ * @status: pointer to the status code
  * Return: array of tokens found in input
  */
-char **get_user_input(size_t *cmdc)
+char **get_user_input(size_t *cmdc, int *status)
 {
 	char *line = NULL;
 	size_t len_line = 0;
@@ -56,11 +56,12 @@ char **get_user_input(size_t *cmdc)
 	{
 		/* EOF */
 		free(line);
+		*status = 1;
 		return (NULL);
 	}
 
 	/* tokenize the line */
-	cmdv = split(cmdc, line, " \n");
+	cmdv = split(cmdc, line, " \n", status);
 	if (cmdv == NULL)
 	{
 		free(line);

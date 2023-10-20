@@ -50,42 +50,39 @@ void cleanup(char **cmdv, size_t *cmdc)
  */
 int main(int ac, char *av[], char *envp[])
 {
-	char **cmdv = NULL; /* array of commands */
+	char **cmdv = NULL, *prompt = strdup("($) ");
 	size_t cmdc = 0; /* length of cmdv array */
-	char *prompt = strdup("($) ");
+	int status = 0; /* 0 - ok, 1 - exit */
 
 	int unused1 __attribute__((unused)) = ac;
 	char **unused2 __attribute__((unused)) = av;
 	char **unused3 __attribute__((unused)) = envp;
 	while (1)
 	{
-		/* display prompt */
+		/* pre-cleanuo */
+		cleanup(cmdv, &cmdc);
+
+		if (status == 1)
+			break;
+
 		display_prompt(prompt);
 		/* get_user input and tokenize into cmdv */
-		cmdv = get_user_input(&cmdc);
+		cmdv = get_user_input(&cmdc, &status);
 		if (cmdv == NULL)
 		{
-			if (isatty(STDIN_FILENO) == 1)
+			if (isatty(STDIN_FILENO) == 1 && status == 1)
 				write(STDOUT_FILENO, "\n", 1);
-			cleanup(cmdv, &cmdc);
-			break;
+			continue;
 		}
 		/* parse the commands in cmdv */
 		if (parse(cmdv, &cmdc) != 0)
 			break;
 		/* search for the command */
-		if (search(cmdv, &cmdc) != 0)
-		{
-			cleanup(cmdv, &cmdc);
+		if (search(cmdv, &cmdc, &status) != 0)
 			continue;
-		}
 		/* execute command*/
 		if (execute(cmdv, &cmdc) != 0)
-		{
-			cleanup(cmdv, &cmdc);
 			continue;
-		}
-		cleanup(cmdv, &cmdc);
 	}
 	cleanup(cmdv, &cmdc);
 	free(prompt);
