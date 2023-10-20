@@ -59,6 +59,35 @@ int check_in_path(char *cmd, char abs_cmd[], char **env)
 	return (1);
 }
 
+
+/**
+ * handle_exit - helper function to execute the exit command
+ * @cmdv: array of command tokens
+ * @line: line number
+ * @status: pointer to status code
+ *
+ * Return: 0 (Success) | FAIL
+ */
+int handle_exit(char **cmdv, int line, int *status)
+{
+	int num;
+
+	if (cmdv[1] == NULL)
+		return (0);
+
+	num = atoi(cmdv[1]);
+	if (num == 0)
+	{
+		fprintf(stderr, "./hsh: %d: %s: Illegal number: %s\n", line, cmdv[0],
+				cmdv[1]);
+		*status = 2;
+		return (1);
+	}
+
+	*status = num;
+	return (0);
+}
+
 /**
  * search - looks for commands
  * @cmdv: array of commands
@@ -79,7 +108,6 @@ int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof,
 	char abs_cmd[CMDLEN] = {'\0'};
 
 	size_t *unused1 __attribute__((unused)) = cmdc;
-
 	/* 1. command exists and is executable as is */
 	if (access(cmdv[0], F_OK | X_OK) == 0)
 	{
@@ -97,8 +125,8 @@ int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof,
 	{
 		if (strncmp(cmdv[0], "exit", strlen("exit")) == 0)
 		{
-			*eof = 1;
-			*status = (cmdv[1]) ? atoi(cmdv[1]) : *status;
+			if (handle_exit(cmdv, line, status) == 0)
+				*eof = 1;
 			return (1);
 		}
 		else if (strncmp(cmdv[0], "env", strlen("env")) == 0)
@@ -108,7 +136,6 @@ int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof,
 			return (1);
 		}
 	}
-
 	*status = 127;
 	fprintf(stderr, "./hsh: %d: %s: not found\n", line, cmdv[0]);
 	return (1);
