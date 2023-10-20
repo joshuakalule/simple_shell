@@ -4,11 +4,12 @@
  * execute - execute commands
  * @cmdv: array of commands
  * @cmdc: number of command tokens
+ * @env: environment
  * @status_code: pointer to the status code
  *
  * Return: 0(SUCCESS)
  */
-int execute(char **cmdv, size_t *cmdc, int *status_code)
+int execute(char **cmdv, size_t *cmdc, char **env, int *status_code)
 {
 	pid_t child_pid;
 	int status;
@@ -26,7 +27,7 @@ int execute(char **cmdv, size_t *cmdc, int *status_code)
 	if (child_pid == 0)
 	{
 		/* this executes within the child process */
-		if (execve(cmdv[0], cmdv, environ) == -1)
+		if (execve(cmdv[0], cmdv, env) == -1)
 		{
 			perror("Error:");
 		}

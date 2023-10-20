@@ -32,7 +32,7 @@ int parse(char **argv, size_t *cmdc);
 int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof);
 
 /* execute.c */
-int execute(char **cmdv, size_t *cmdc, int *status);
+int execute(char **cmdv, size_t *cmdc, char **env, int *status);
 
 /* utilities.c */
 void free_array(char **array, size_t *narray);

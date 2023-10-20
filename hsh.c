@@ -41,14 +41,14 @@ void cleanup(char **cmdv, size_t *cmdc)
  * main - entry point to the program
  * @ac: number of arguments passed to the program
  * @av: array of arguments passed to the program
- * @envp: array of environment arguments passed to the program
+ * @env: array of environment arguments passed to the program
  *
  * Return: 0(Success)
  *
  * Description:
  * mode: 1 (interactive) 0 (non-interactive)
  */
-int main(int ac, char *av[], char *envp[])
+int main(int ac, char *av[], char *env[])
 {
 	char **cmdv = NULL, *prompt = strdup("($) ");
 	size_t cmdc = 0; /* length of cmdv array */
@@ -58,7 +58,6 @@ int main(int ac, char *av[], char *envp[])
 
 	int unused1 __attribute__((unused)) = ac;
 	char **unused2 __attribute__((unused)) = av;
-	char **unused3 __attribute__((unused)) = envp;
 	while (1)
 	{
 		/* pre-cleanuo */
@@ -83,7 +82,7 @@ int main(int ac, char *av[], char *envp[])
 		if (search(cmdv, &cmdc, nline, &status, &eof) != 0)
 			continue;
 		/* execute command*/
-		if (execute(cmdv, &cmdc, &status) != 0)
+		if (execute(cmdv, &cmdc, env, &status) != 0)
 			continue;
 	}
 	cleanup(cmdv, &cmdc);
