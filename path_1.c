@@ -25,8 +25,9 @@ char *mygetenv(char *var, char **env)
 		env_key = envpair[0];
 		env_value = (envpair[1]) ? strdup(envpair[1]) : NULL;
 
-		if (strncmp(env_key, var, strlen(env_key) + 1) == 0)
+		if (strncmp(env_key, var, strlen(var) + 1) == 0)
 		{
+			print("here");
 			free_array(envpair, &nenvpair);
 			envpair = NULL;
 			return (env_value);
