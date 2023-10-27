@@ -105,8 +105,8 @@ char **set_var(char **env, char *new_var)
 void mysetenv(container_t *box, int *found)
 {
 	char *new_var = NULL;
-	char *new_var_key = box->cmdv[1];
-	char *new_var_value = box->cmdv[2];
+	char *new_var_key;
+	char *new_var_value;
 	char **new_env = NULL;
 	size_t n = 0;
 	int idx;
@@ -118,8 +118,9 @@ void mysetenv(container_t *box, int *found)
 		box->status = 98;
 		return;
 	}
+	new_var_key = box->cmdv[1];
+	new_var_value = box->cmdv[2];
 	new_var = gen_var(new_var_key, new_var_value);
-
 	idx = varpos(box->env, new_var_key);
 	if (idx == -1)
 	{
@@ -131,7 +132,6 @@ void mysetenv(container_t *box, int *found)
 		/* modify */
 		new_env = modify_var(box->env, idx, new_var);
 	}
-
 	if (new_env != NULL)
 	{
 		free_array(box->env, &n);
