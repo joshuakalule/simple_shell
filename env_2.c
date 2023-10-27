@@ -59,9 +59,6 @@ void myunsetenv(container_t *box, int *found)
 	idx = varpos(box->env, box->cmdv[1]);
 	if (idx == -1)
 	{
-		fprintf(stderr, "./hsh: unsetenv: VARIABLE name '%s' not found\n",
-				box->cmdv[1]);
-		box->status = 99;
 		return;
 	}
 	new_env = malloc(sizeof(*new_env) * (len_old - 1));
