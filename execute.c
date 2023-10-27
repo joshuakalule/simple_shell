@@ -2,19 +2,14 @@
 
 /**
  * execute - execute commands
- * @cmdv: array of commands
- * @cmdc: number of command tokens
- * @env: environment
- * @status_code: pointer to the status code
+ * @box: container
  *
  * Return: 0(SUCCESS)
  */
-int execute(char **cmdv, size_t *cmdc, char **env, int *status_code)
+int execute(container_t *box)
 {
 	pid_t child_pid;
 	int status;
-
-	size_t *unused __attribute__((unused)) = cmdc;
 
 	child_pid = fork();
 
@@ -27,7 +22,7 @@ int execute(char **cmdv, size_t *cmdc, char **env, int *status_code)
 	if (child_pid == 0)
 	{
 		/* this executes within the child process */
-		if (execve(cmdv[0], cmdv, env) == -1)
+		if (execve(box->cmdv[0], box->cmdv, box->env) == -1)
 		{
 			perror("Error:");
 		}
@@ -37,9 +32,9 @@ int execute(char **cmdv, size_t *cmdc, char **env, int *status_code)
 		/* this executes within the parent process */
 		wait(&status);
 		if (status == 512)
-			*status_code = 2;
+			box->status = 2;
 		else
-			*status_code = 0;
+			box->status = 0;
 		return (status);
 	}
 	return (0);

@@ -36,13 +36,40 @@ void free_array(char **array, size_t *narray)
 	if (!array)
 		return;
 
-	for (i = 0; i < *narray; i++)
+	for (i = 0; array[i] != NULL; i++)
+	{
 		free(array[i]);
+	}
 
-	free(array[i]);
 	free(array);
+	array = NULL;
+	*narray = 0;
 }
 
+/**
+ * arraydup - make a copy of an array
+ * @arr: array
+ *
+ * Return: new array
+ */
+char **arraydup(char **arr)
+{
+	int i;
+	size_t len = 0;
+	char **new_arr;
+
+	len = lenarr(arr);
+
+	new_arr = malloc(sizeof(*new_arr) * len);
+	if (!new_arr)
+		return (NULL);
+
+	for (i = 0; arr[i] != NULL; i++)
+		new_arr[i] = strdup(arr[i]);
+
+	new_arr[i] = NULL;
+	return (new_arr);
+}
 
 /**
  * add_token - add the contents of buf as an item into the array

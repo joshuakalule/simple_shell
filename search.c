@@ -5,18 +5,6 @@
 /* search for cmds */
 
 /**
- * print_env - print the environment
- * @env: environment
- */
-void print_env(char **env)
-{
-	size_t i;
-
-	for (i = 0; env[i] != NULL; i++)
-		fprintf(stdout, "%s\n", env[i]);
-}
-
-/**
  * check_in_path - checks for cmd in path
  * @cmd: command to check for
  * @abs_cmd: found command
@@ -62,81 +50,76 @@ int check_in_path(char *cmd, char abs_cmd[], char **env)
 
 /**
  * handle_exit - helper function to execute the exit command
- * @cmdv: array of command tokens
- * @line: line number
- * @status: pointer to status code
- *
- * Return: 0 (Success) | FAIL
+ * @box: container
+ * @found: 1 - found Else NOT FOUND
  */
-int handle_exit(char **cmdv, int line, int *status)
+void handle_exit(container_t *box, int *found)
 {
 	int num;
 
-	if (cmdv[1] == NULL)
-		return (0);
-
-	num = atoi(cmdv[1]);
-	if (num <= 0)
+	*found = 1;
+	if (box->cmdv[1] == NULL)
 	{
-		fprintf(stderr, "./hsh: %d: %s: Illegal number: %s\n", line, cmdv[0],
-				cmdv[1]);
-		*status = 2;
-		return (1);
+		box->eof = 1;
+		return;
 	}
 
-	*status = num;
-	return (0);
+	num = atoi(box->cmdv[1]);
+	if (num <= 0)
+	{
+		fprintf(stderr, "./hsh: %d: %s: Illegal number: %s\n", box->nline,
+				box->cmdv[0], box->cmdv[1]);
+		box->status = 2;
+		return;
+	}
+
+	/* set exit code */
+	box->status = num;
+	/* EOF (True) */
+	box->eof = 1;
 }
 
 /**
  * search - looks for commands
- * @cmdv: array of commands
- * @cmdc: number of command tokens
- * @line: line number
- * @status: pointer to status code
- * @eof: pointer to eof variable
- * @env: environment
+ * @box: container
  *
  * Return: 0 (FOUND) else NOT found
  *
  * Description:
  * cmdv: 'cmd' 'arg1' 'arg2' ...
  */
-int search(char **cmdv, size_t *cmdc, int line, int *status, int *eof,
-		char **env)
+int search(container_t *box)
 {
 	char abs_cmd[CMDLEN] = {'\0'};
+	int found = 0;
 
-	size_t *unused1 __attribute__((unused)) = cmdc;
 	/* 1. command exists and is executable as is */
-	if (access(cmdv[0], F_OK | X_OK) == 0)
+	if (access(box->cmdv[0], F_OK | X_OK) == 0)
 	{
 		return (0);
 	}
 	/* 2. command is executable in the path */
-	else if (check_in_path(cmdv[0], abs_cmd, env) == 0)
+	else if (check_in_path(box->cmdv[0], abs_cmd, box->env) == 0)
 	{
-		free(cmdv[0]);
-		cmdv[0] = strdup(abs_cmd);
+		free(box->cmdv[0]);
+		box->cmdv[0] = strdup(abs_cmd);
 		return (0);
 	}
 	/* 3. cammand is special case */
 	else
 	{
-		if (strncmp(cmdv[0], "exit", strlen("exit")) == 0)
-		{
-			if (handle_exit(cmdv, line, status) == 0)
-				*eof = 1;
+		if (strcmp(box->cmdv[0], "exit") == 0)
+			handle_exit(box, &found);
+		else if (strcmp(box->cmdv[0], "env") == 0)
+			print_env(box, &found);
+		else if (strcmp(box->cmdv[0], "setenv") == 0)
+			mysetenv(box, &found);
+		else if (strcmp(box->cmdv[0], "unsetenv") == 0)
+			myunsetenv(box, &found);
+		if (found == 1)
 			return (1);
-		}
-		else if (strncmp(cmdv[0], "env", strlen("env")) == 0)
-		{
-			print_env(env);
-			*status = 0;
-			return (1);
-		}
 	}
-	*status = 127;
-	fprintf(stderr, "./hsh: %d: %s: not found\n", line, cmdv[0]);
+	box->status = 127;
+	fprintf(stderr, "./hsh: %d: %s: not found\n", box->nline, box->cmdv[0]);
 	return (1);
 }

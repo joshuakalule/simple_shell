@@ -17,24 +17,27 @@ void display_prompt(char *prompt)
 }
 
 /**
- * cleanup - clear cmdv and reset cmdc
- * @cmdv: array of tokens
- * @cmdc: number of tokens
+ * init - initiate the box conatining all variables
+ * @box: conatainer of all variables
+ * @ac: argc (main)
+ * @av: argv (main)
+ * @env: env (main)
  */
-void cleanup(char **cmdv, size_t *cmdc)
+void init(container_t *box, int ac, char **av, char **env)
 {
-	size_t i;
+	box->cmdv = NULL;
+	box->cmdc = 0; /* length of cmdv array */
 
-	if (!cmdv || *cmdc == 0)
-		return;
+	box->status = 0; /* return code of previous command */
+	box->eof = 0;
+	box->nline = 0;
 
-	for (i = 0; i < *cmdc; i++)
-	{
-		free(cmdv[i]);
-	}
-	free(cmdv);
-	cmdv = NULL;
-	*cmdc = 0;
+	box->ac = ac;
+	box->av = av;
+	box->env = arraydup(env);
+
+	box->aliases = NULL;
+	box->prompt = strdup("($) ");
 }
 
 /**
@@ -50,42 +53,41 @@ void cleanup(char **cmdv, size_t *cmdc)
  */
 int main(int ac, char *av[], char *env[])
 {
-	char **cmdv = NULL, *prompt = strdup("($) ");
-	size_t cmdc = 0; /* length of cmdv array */
-	int status = 0; /* return code of previous command */
-	int eof = 0; /* 0 - got to next command, 1 - EOF */
-	int nline = 0;
+	container_t *box;
+	int status;
 
-	int unused1 __attribute__((unused)) = ac;
-	char **unused2 __attribute__((unused)) = av;
+	/* initiate box */
+	box = malloc(sizeof(container_t));
+	init(box, ac, av, env);
+
 	while (1)
 	{
 		/* pre-cleanuo */
-		cleanup(cmdv, &cmdc);
-		if (eof == 1)
+		cleanup(box->cmdv, &box->cmdc);
+		if (box->eof == 1)
 			break;
 
-		display_prompt(prompt);
+		display_prompt(box->prompt);
 		/* get_user input and tokenize into cmdv */
-		cmdv = get_user_input(&cmdc, &eof);
-		nline++;
-		if (cmdv == NULL)
+		box->cmdv = get_user_input(box);
+		(box->nline)++;
+		if (box->cmdv == NULL)
 		{
-			if (isatty(STDIN_FILENO) == 1 && eof == 1)
+			if (isatty(STDIN_FILENO) == 1 && box->eof == 1)
 				write(STDOUT_FILENO, "\n", 1);
 			continue;
 		}
 		/* parse the commands in cmdv */
-		if (parse(cmdv, &cmdc) != 0)
+		if (parse(box) != 0)
 			break;
 		/* search for the command */
-		if (search(cmdv, &cmdc, nline, &status, &eof, env) != 0)
+		if (search(box) != 0)
 			continue;
 		/* execute command*/
-		if (execute(cmdv, &cmdc, env, &status) != 0)
+		if (execute(box) != 0)
 			continue;
 	}
-	cleanup(cmdv, &cmdc);
-	free(prompt);
+	status = box->status;
+	free_box(box);
 	return (status);
 }
